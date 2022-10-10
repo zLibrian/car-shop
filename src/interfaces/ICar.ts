@@ -1,7 +1,7 @@
-import z from 'zod';
+import { z } from 'zod';
 import { VehicleSchema } from './IVehicle';
 
-export const CarZodSchema = VehicleSchema.extend({
+export const CarSchema = VehicleSchema.extend({
   doorsQty: z.number({
     required_error: 'Insira número de portas do carro',
     invalid_type_error: 'Número de portas do carro deve ser um número',
@@ -19,4 +19,4 @@ export const CarZodSchema = VehicleSchema.extend({
     .int({ message: 'Número de assentos deve ser um valor inteiro' }),
 });
 
-export type ICar = z.infer<typeof CarZodSchema>;
+export type ICar = z.infer<typeof CarSchema>;
