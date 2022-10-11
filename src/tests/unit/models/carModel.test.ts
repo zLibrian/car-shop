@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaisAsPromised from 'chai-as-promised';
 import { Model } from 'mongoose';
 import * as sinon from 'sinon';
-import { ZodError } from 'zod';
 import CarModel from '../../../models/CarModel';
 import { carMockWithId, carsMock } from '../mocks/carMocks';
 chai.use(chaisAsPromised);
@@ -89,7 +88,7 @@ describe('Testa o comportamento do CarModel.ts', () => {
         try {
           await carModel.update('123', {} as any);
         } catch (erro: any) {
-          chai.expect(erro).to.be.an.instanceof(ZodError);
+          chai.expect(erro).to.be.an.instanceof(Error);
         }
       });
     });

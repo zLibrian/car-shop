@@ -1,14 +1,12 @@
 import { z } from 'zod';
 import { VehicleSchema } from './IVehicle';
 
-export const MotorcycleSchema = VehicleSchema.extend({
+export const iMotorcycleSchema = VehicleSchema.extend({
   category: z.enum(['Street', 'Custom', 'Trail']),
-
   engineCapacity: z.number({
-    required_error: 'Insira o valor da capacidade do motor',
-    invalid_type_error: 'Capacidade do motor do motor é um número',
-  }).min(0)
-    .max(2500),
+    required_error: 'engineCapacity is required',
+    invalid_type_error: 'engineCapacity must be a number',
+  }).lte(2500, { message: 'engineCapacity cannot be greater than 2500' }).positive(),
 });
 
-export type IMotorcycle = z.infer<typeof MotorcycleSchema>;
+export type IMotorcycle = z.infer<typeof iMotorcycleSchema>;
