@@ -39,4 +39,9 @@ export default class CarService implements IService<ICar> {
     }
     return newCar;
   }
+
+  public async delete(_id: string): Promise<ICar | null> {
+    await this.readOne(_id);
+    return this._carModel.delete(_id);
+  }
 }
