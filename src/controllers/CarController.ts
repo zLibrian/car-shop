@@ -23,4 +23,13 @@ export default class CarController {
     const car = await this._service.readOne(id);
     return res.status(200).json(car);
   }
+
+  public async update(req: Request, res: Response<ICar>) {
+    const { id } = req.params;
+    if (id.length < 24) {
+      throw new Error('InvalidMongoId');
+    }
+    const car = await this._service.update(id, req.body);
+    return res.status(200).json(car);
+  }
 }

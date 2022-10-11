@@ -1,4 +1,5 @@
 import { isValidObjectId, Model } from 'mongoose';
+import { CarSchema } from '../interfaces/ICar';
 import { IModel } from '../interfaces/IModel';
 
 export default abstract class MongoModel<T> implements IModel<T> {
@@ -20,10 +21,13 @@ export default abstract class MongoModel<T> implements IModel<T> {
     return this._model.findOne({ _id });
   }
 
-  // public async update(_id: string, _obj: Partial<T>): Promise<T | null> {
-  //   if (!isValidObjectId(_id)) throw new Error('InvalidMongoId');
-  //   return this._model.findOneAndUpdate({ _id, _obj });
-  // }
+  public async update(_id: string, obj: T): Promise<T | null> {
+    const parsed = CarSchema.safeParse(obj);
+    if (!parsed.success) {
+      throw parsed.error;
+    }
+    return this._model.findByIdAndUpdate(_id, parsed.data);
+  }
 
   // public async delete(_id: string): Promise<T | null> {
   //   if (!isValidObjectId(_id)) throw new Error('InvalidMongoId');

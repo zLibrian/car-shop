@@ -27,7 +27,7 @@ const mongooseCarSchema = new Schema<ICar>({
     type: Number,
     required: [true, 'Número de assentos do carro requerido'],
   },
-});
+}, { versionKey: false });
 
 export default class CarModel extends MongoModel<ICar> {
   constructor(model = mongooseCreateModel('cars', mongooseCarSchema)) {
