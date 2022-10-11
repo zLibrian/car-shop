@@ -7,7 +7,7 @@ import { ZodError } from 'zod';
 import CarController from '../../../controllers/CarController';
 import CarModel from '../../../models/CarModel';
 import CarService from '../../../services/CarService';
-import { carMock } from '../mocks/carMocks';
+import { carMock, carsMock } from '../mocks/carMocks';
 chai.use(chaisAsPromised);
 
 describe('Testa o comportamento do CarController.ts', () => {
@@ -42,6 +42,27 @@ describe('Testa o comportamento do CarController.ts', () => {
       });
       it('A api dispara um erro', async () => {
         await chai.expect(carController.create(req, res)).to.eventually.rejectedWith(ZodError);
+      });
+    });
+  });
+
+  describe('Ao tentar listar todos os carros', () => {
+    const req = {} as Request;
+    const res = {} as Response;
+
+    describe('em caso de sucesso', () => {
+      beforeEach(() => {
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(carService, 'read').resolves(carsMock);
+      })
+      afterEach(() => {
+        sinon.restore();
+      })
+      it('Retorna status 200 com um array de carros cadastrados', async () => {
+        await carController.read(req, res);
+        chai.expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
+        chai.expect((res.json as sinon.SinonStub).calledWith(carsMock)).to.be.true;
       });
     });
   });
