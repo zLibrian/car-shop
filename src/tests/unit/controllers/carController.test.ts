@@ -107,4 +107,46 @@ describe('Testa o comportamento do CarController.ts', () => {
       });
     });
   });
+
+
+  describe('Ao tentar atualizar um carro em especifico', () => {
+    const req = {} as Request;
+    const res = {} as Response;
+
+    describe('em caso de sucesso', () => {
+      beforeEach(() => {
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        req.params = { id: carsMock[1]._id };
+        sinon.stub(carService, 'update').resolves(carsMock[2]);
+      })
+      afterEach(() => {
+        sinon.restore();
+      })
+      it('Retorna status 200 com o carro cadastrado', async () => {
+        await carController.update(req, res);
+        chai.expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
+        chai.expect((res.json as sinon.SinonStub).calledWith(carsMock[2])).to.be.true;
+      });
+    });
+
+    describe('em caso de falha', () => {
+      beforeEach(() => {
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        req.params = { id: '123' };
+        sinon.stub(carService, 'update').resolves();
+      })
+      afterEach(() => {
+        sinon.restore();
+      })
+      it('Retorna status 400 com uma mensagem de erro', async () => {
+        try {
+          await carController.update(req, res);
+        } catch (error: any) {
+          chai.expect(error.message).to.be.equal('InvalidMongoId')
+        }
+      });
+    });
+  });
 });

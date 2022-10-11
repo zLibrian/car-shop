@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaisAsPromised from 'chai-as-promised';
 import { Model } from 'mongoose';
 import * as sinon from 'sinon';
+import { ZodError } from 'zod';
 import CarModel from '../../../models/CarModel';
 import { carMockWithId, carsMock } from '../mocks/carMocks';
 chai.use(chaisAsPromised);
@@ -62,6 +63,33 @@ describe('Testa o comportamento do CarModel.ts', () => {
         } catch (erro: any) {
           chai.expect(erro).to.be.an.instanceof(Error);
           chai.expect(erro.message).to.be.equal('InvalidMongoId');
+        }
+      });
+    });
+  });
+
+
+  describe('Ao tentar atualizar um carro em especifico', () => {
+    before(async () => {
+      sinon.stub(Model, 'findByIdAndUpdate').resolves(carMockWithId);
+    });
+
+    after(() => {
+      sinon.restore();
+    })
+    describe('em caso de sucesso', () => {
+      it('Retorna um objeto do carro atualizado', async () => {
+        const carro = await carModel.update(carsMock[1]._id, carMockWithId);
+        chai.expect(carro).to.be.deep.equal(carMockWithId);
+      });
+    });
+
+    describe('em caso de falha', () => {
+      it('Error', async () => {
+        try {
+          await carModel.update('123', {} as any);
+        } catch (erro: any) {
+          chai.expect(erro).to.be.an.instanceof(ZodError);
         }
       });
     });

@@ -80,4 +80,44 @@ describe('Testa o comportamento do CarService.ts', () => {
       });
     });
   });
+
+  describe('Ao tentar atualizar um carro em especifico', () => {
+    before(async () => {
+      sinon.stub(carModel, 'update').resolves(carsMock[2]);
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    })
+    describe('em caso de sucesso', () => {
+      it('Retorna um objeto com o carro pesquisado', async () => {
+        const carro = await carService.update(carsMock[1]._id, carsMock[1]);
+        chai.expect(carro).to.be.deep.equal(carsMock[2]);
+      });
+    });
+
+    describe('em caso de dados inválidos', () => {
+      it('Error', async () => {
+        try {
+          await carService.update('', {} as any);
+        } catch (erro) {
+          chai.expect(erro).to.be.an.instanceof(Error);
+        }
+      });
+    });
+
+    describe('em caso de dados inválidos', () => {
+      beforeEach(async () => {
+        sinon.stub(carModel, 'update').resolves(null);
+      });
+      it('Error', async () => {
+        try {
+          await carService.update(carsMock[1]._id, carsMock[2]);
+        } catch (erro: any) {
+          chai.expect(erro).to.be.an.instanceof(Error);
+          chai.expect(erro.message).to.be.equal('ObjectNotFound');
+        }
+      });
+    });
+  });
 });
