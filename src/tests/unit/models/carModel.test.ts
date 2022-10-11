@@ -39,4 +39,31 @@ describe('Testa o comportamento do CarModel.ts', () => {
       });
     });
   });
+
+  describe('Ao tentar listar um carro em especifico', () => {
+    before(async () => {
+      sinon.stub(Model, 'findOne').resolves(carsMock[1]);
+    });
+
+    after(() => {
+      sinon.restore();
+    })
+    describe('em caso de sucesso', () => {
+      it('Retorna um objeto do carro cadastrado', async () => {
+        const carro = await carModel.readOne(carsMock[1]._id);
+        chai.expect(carro).to.be.deep.equal(carsMock[1]);
+      });
+    });
+
+    describe('em caso de falha', () => {
+      it('Error', async () => {
+        try {
+          await carModel.readOne('123');
+        } catch (erro: any) {
+          chai.expect(erro).to.be.an.instanceof(Error);
+          chai.expect(erro.message).to.be.equal('InvalidMongoId');
+        }
+      });
+    });
+  });
 });

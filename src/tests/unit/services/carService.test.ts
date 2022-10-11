@@ -50,4 +50,34 @@ describe('Testa o comportamento do CarService.ts', () => {
       });
     });
   });
+
+  describe('Ao tentar listar um carro em especifico', () => {
+    before(async () => {
+      sinon.stub(carModel, 'readOne').resolves(carsMock[1]);
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    })
+    describe('em caso de sucesso', () => {
+      it('Retorna um objeto com o carro pesquisado', async () => {
+        const carro = await carService.readOne(carsMock[1]._id);
+        chai.expect(carro).to.be.deep.equal(carsMock[1]);
+      });
+    });
+
+    describe('em caso de falha', () => {
+      beforeEach(async () => {
+        sinon.stub(carModel, 'readOne').resolves(null);
+      });
+      it('Retorna uma mensagem de erro com a mensagem de ObjectNotFound', async () => {
+        try {
+          await carService.readOne(carsMock[1]._id);
+        } catch (erro: any) {
+          chai.expect(erro).to.be.an.instanceof(Error);
+          chai.expect(erro.message).to.be.equal('ObjectNotFound');
+        }
+      });
+    });
+  });
 });
